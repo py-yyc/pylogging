@@ -148,8 +148,12 @@ dt { text-align: left; }
 
         <section>
             <h2>Software for logs</h2>
-            <p class="fragment"><a href="http://logstash.net"><img src="images/logstash-logo.png" height=100 /> logstash</a> <span class="fragment">+</span></p>
-            <p class="fragment"><a href="https://www.elastic.co/products/kibana"><img src="images/kibana-logo.png"/></a> <span class="fragment">=</span></p>
+            <p>
+            <span class="fragment"><a href="http://logstash.net"><img src="images/logstash-logo.png" height=100 /> logstash</a></span>
+            <span class="fragment">+</span></p>
+            <span class="fragment"><a href="https://www.elastic.co/products/kibana"><img src="images/kibana-logo.png"/></a>
+            <span class="fragment">=</span>
+            </p>
             <p class="fragment"><a href="images/kibana-1.png"><img src="images/kibana-1.png" width=75% /></a></p>
         </section>
 
@@ -206,7 +210,7 @@ INFO 10:10:10.10 cheetah: rendering web page took 34 ms
             <p class="fragment">is now</p>
             <pre class="fragment"><code data-trim class="language-python">
             logger.info( "render_time", what=self, took=render_time() )
-INFO, 10:10:10.10, "render_time", { who="cheetah", took=34 }
+INFO, 10:10:10.10, "render_time", { what="cheetah", took=34 }
             </code></pre>
             <p class="fragment">which is obviously easy to parse for both a computer and not too bad for a person</p>
             <p class="fragment">(I always hated it when professors said <em>obviously</em>)</p>
