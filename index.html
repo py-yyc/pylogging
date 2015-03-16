@@ -37,6 +37,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 <style type="text/css">
 dt { text-align: left; }
 .reveal li small { vertical-align: middle; }
+.reveal img { vertical-align: middle; }
 </style>
 
 </head>
@@ -48,11 +49,28 @@ dt { text-align: left; }
     <!-- Any section element inside of this container is displayed as a slide -->
     <div class="slides">
 
-    <!-- <section data-background="images/stacked-logs.jpg"> -->
     <section>
         <h1>Logging</h1>
         <h3>A journey through time</h3>
         <small>by <a href="http://www.burgundywall.com">Kurt Neufeld</a></a></small>
+    </section>
+
+    <section>
+        <h2>What is logging?</h2>
+    </section>
+
+    <section>
+        <img src="images/logging-bw.jpg" alt="" />
+        <p class="fragment">no</p>
+    </section>
+
+    <section>
+        <img src="images/stacked-logs.jpg" alt="" />
+        <p class="fragment">closer</p>
+    </section>
+
+    <section data-background="images/logs.png">
+        <h2 class="fragment">ooohh...</h2>
     </section>
 
     <section>
@@ -63,13 +81,13 @@ dt { text-align: left; }
         </dl>
         <dl class="fragment">
             <dt>message</dt>
-            <dd>(noun) a distinct piece of information emitted from an application</dd>
+            <dd>(noun) a distinct piece of information emitted from an application (with a timestamp)</dd>
             <dd class="fragment">almost always a single line of text</dd>
         </dl>
         <dl class="fragment">
             <dt>quick example</dt>
             <dd>
-            <code style="font-size:small">DEBUG 2015-03-14 06:00:01,700 pgrabber.imgparser:52: get_url_contents: http://dilbert.com/</code>
+            <pre style="font-size:small">DEBUG 2015-03-14 06:00:01,700 pgrabber.imgparser:52: get_url_contents: http://dilbert.com/</pre>
             </dd>
         </dl>
     </section>
@@ -80,7 +98,6 @@ dt { text-align: left; }
         <p>There are several reasons why you want to enable logging.</p>
         <ol>
             <li class="fragment">have a record of errors</li>
-            <li class="fragment">have a history low level information for future aid in debugging</li>
             <li class="fragment">application monitoring</li>
             <ol>
                 <li class="fragment">metrics <small class="fragment">that took 3ms</small></li>
@@ -89,6 +106,12 @@ dt { text-align: left; }
             </ol>
             <li class="fragment">the law <small class="fragment">:(</small></li>
             <li class="fragment">security audits <small class="fragment">:)</small></li>
+            <li class="fragment">have a history of low level information for future aid in debugging
+            <ul>
+                <li class="fragment">this is the through time part</li>
+                <li class="fragment">this is a gift to your future self</li>
+            </ul>
+            </li>
         </ol>
     </section>
 
@@ -114,23 +137,123 @@ dt { text-align: left; }
         </section>
 
         <section>
-            <h2>Clever Quotes</h2>
-            <p>
-            These guys come in two forms, inline: <q cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-                &ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
+            <h2>Who are logs for?</h2>
+            <p class="fragment">As previously mentioned, logs are for your future self. This implies that
+            logs are for humans. And they certainly can be, but more often than not...</p>
+            <p class="fragment">
+            Logs are for computers. Humans don't run analytics and create graphs by hand,
+            computers do that.
             </p>
-            <blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-                &ldquo;For years there has been a theory that millions of monkeys typing at random on millions of typewriters would
-                reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
-            </blockquote>
+        </section>
+
+        <section>
+            <h2>Software for logs</h2>
+            <p class="fragment"><a href="http://logstash.net"><img src="images/logstash-logo.png" height=100 /> logstash</a> <span class="fragment">+</span></p>
+            <p class="fragment"><a href="https://www.elastic.co/products/kibana"><img src="images/kibana-logo.png"/></a> <span class="fragment">=</span></p>
+            <p class="fragment"><a href="images/kibana-1.png"><img src="images/kibana-1.png" width=75% /></a></p>
+        </section>
+
+        <section>
+            <h2>Logstash</h2>
+            <p>I've only just started playing with logstash so I'm nowhere
+            close to an expert. Check it out online and watch some youtube videos.</p>
+            <p class="fragment">Having said that, here's my expert opinion.</p>
+            <p class="fragment"><strong>It's freaking awesome!</strong></p>
+            <p class="fragment">Logstash parses the logs and then
+            feeds these records to <a href="https://www.elastic.co/products/elasticsearch">elasticsearch</a> which can then be searched and graphed using kibana. Kibana
+            is a search and graphing frontend to elasticsearch.</p>
+        </section>
+
+        <section>
+            <h2>Creating the logs...</h2>
+            <p>You typically create a log message with some code that looks something
+            like this...</p>
+            <pre class="fragment"><code data-trim class="language-python">
+            logger.info( "%s: rendering web page took %d ms", self, render_time() )
+            </code></pre>
+            <p class="fragment">Creating that log message is potentially expensive</p>
+        </section>
+
+        <section>
+            <h2>Parsing the logs...</h2>
+            <p class="fragment">And then the first thing a log parser
+            has to do is the opposite and get meaning out of the message.</p>
+            <pre class="fragment"><code data-trim class="language-python">
+            obj, render_time = re.search( "(\w+): rendering web page took (\d+) ms", msg ).groups()
+render_time = int(render_time)
+            </code></pre>
+            <p class="fragment">And you'd have to write a custom
+            parser for <strong>each</strong> log message you want to parse</p>
+        </section>
+
+        <section>
+            <h2>Structured Logging</h2>
+            <p class="fragment">Which brings us to a growing <em>movement</em>
+            called structured logging</p>
+            <p class="fragment">If you know your log messages are going to be consumed
+            by a computer (vs a human) then why not make it easier on the computer (and
+            the human writing the code) by making the log message easily parseable.</p>
+            <p class="fragment">Write your log messages in JSON!</p>
+            <p class="fragment">(or xml if you hate yourself)</p>
+        </section>
+
+        <section>
+            <h2>Structured Log</h2>
+            <pre class="fragment"><code data-trim class="language-python">
+            logger.info( "%s: rendering web page took %d ms", self, render_time() )
+INFO 10:10:10.10 cheetah: rendering web page took 34 ms
+            </code></pre>
+            <p class="fragment">is now</p>
+            <pre class="fragment"><code data-trim class="language-python">
+            logger.info( "render_time", what=self, took=render_time() )
+INFO, 10:10:10.10, "render_time", { who="cheetah", took=34 }
+            </code></pre>
+            <p class="fragment">which is obviously easy to parse for both a computer and not too bad for a person</p>
+            <p class="fragment">(I always hated it when professors said <em>obviously</em>)</p>
+        </section>
+
+        <section>
+            <h2>Parsing A Structured Log</h2>
+            <pre class="fragment"><code data-trim class="language-python">
+            level, time, event, fields = json.loads(msg)
+            </code></pre>
+            <p><span class="fragment">that's it</span> <span class="fragment">you're done</span></p>
+            <p class="fragment">that works for every single structured log message</p>
+            <p class="fragment">what you do with it is left as an exercise to the reader</p>
+        </section>
+
+        <section>
+            <h2>Performance</h2>
+            <p class="fragment">any logging framework worth its salt early exits if the log level is too low</p>
+            <pre class="fragment"><code data-trim class="language-python">
+            for i in xrange(1000000): pass
+time: 0m0.019s # baseline for loop
+            </code></pre>
+            <pre class="fragment"><code data-trim class="language-python">
+            for i in xrange(1000000): logger.debug("%d",i) # log level too low
+time: 0m0.061s # 0.04 slower
+            </code></pre>
+            <pre class="fragment"><code data-trim class="language-python">
+            for i in xrange(1000000): logger.debug("%d",i) # no longer too low
+time: 0m37.931s # piped to /dev/null
+            </code></pre>
+            <p class="fragment">so I don't want to <strong>EVER</strong> hear that you don't log
+            because it's <em>too slow</em></p>
+            <p class="fragment"><strong>EVER!<span class="fragment">!1!</span></strong></p>
         </section>
 
         <section style="text-align: left;">
             <h1>THE END</h1>
-            <p>
-            - <a href="http://slides.com">Try the online editor</a> <br>
-            - <a href="https://github.com/hakimel/reveal.js">Source code &amp; documentation</a>
-            </p>
+            <h3 class="fragment">Thanks in part to..</h3>
+            <ul class="fragment">
+                <li>http://lab.hakim.se/reveal-js/</li>
+                <li>http://gregoryszorc.com/blog/category/logging/</li>
+            </ul>
+        </section>
+
+        <section>
+            <h1>You Guys!</h1>
+            <h3 class="fragment">(and polyglot)</h3>
         </section>
 
         <!--
