@@ -114,24 +114,24 @@ dt { text-align: left; }
     </section>
 
     <section>
-        <h2>Dissect Log Message</h2>
-        <small>
-            <span class="fragment highlight-red" data-fragment-index=1>DEBUG</span>
-            <span class="fragment highlight-blue" data-fragment-index=2>2015-03-14 06:00:01,700</span>
-            <span class="fragment highlight-green" data-fragment-index=3>pgrabber.imgparser:52:</span>
-            <span>get_url_contents: http://dilbert.com/</span>
-        </small>
-        <table>
-            <thead>
-                <tr><th>Piece</th><th>Value</th></tr>
-            </thead>
-            <tbody>
-            <tr class="fragment" data-fragment-index=1><td><span style="color:#ff2c2d">level</span></td><td>DEBUG</td></tr>
-            <tr class="fragment" data-fragment-index=2><td><span style="color:#1b91ff">time stamp</span></td><td>2015-03-14 06:00:01,700</td></tr>
-            <tr class="fragment" data-fragment-index=3><td><span style="color:#17ff2e">location</td><td>pgrabber.imgparser:52</td></tr>
-                <tr class="fragment" data-fragment-index=4><td><span>message</span></td><td>get_url_contents: http://dilbert.com/</td></tr>
-                </tbody>
-            </table>
+      <h2>Dissect Log Message</h2>
+      <small>
+        <span class="fragment highlight-red" data-fragment-index=1>DEBUG</span>
+        <span class="fragment highlight-blue" data-fragment-index=2>2015-03-14 06:00:01,700</span>
+        <span class="fragment highlight-green" data-fragment-index=3>pgrabber.imgparser:52:</span>
+        <span>get_url_contents: http://dilbert.com/</span>
+      </small>
+      <table>
+        <thead>
+          <tr><th>Piece</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+        <tr class="fragment" data-fragment-index=1><td><span style="color:#ff2c2d">level</span></td><td>DEBUG</td></tr>
+        <tr class="fragment" data-fragment-index=2><td><span style="color:#1b91ff">time stamp</span></td><td>2015-03-14 06:00:01,700</td></tr>
+        <tr class="fragment" data-fragment-index=3><td><span style="color:#17ff2e">location</td><td>pgrabber.imgparser:52</td></tr>
+          <tr class="fragment" data-fragment-index=4><td><span>message</span></td><td>get_url_contents: http://dilbert.com/</td></tr>
+          </tbody>
+        </table>
         </section>
 
         <section>
@@ -173,7 +173,9 @@ dt { text-align: left; }
             <pre class="fragment"><code data-trim class="language-python">
             logger.info( "%s: rendering web page took %d ms", self, render_time() )
             </code></pre>
+            <!--
             <p class="fragment">Creating that log message is potentially expensive</p>
+            -->
         </section>
 
         <section>
