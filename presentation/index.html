@@ -59,7 +59,8 @@ tt, code, pre {
 }
 
 tt {
-  color: #78bae6;
+  color: #142a36;
+    background: #a98b19;
 }
 
 pre > code {
@@ -447,17 +448,20 @@ def logconf():
             the human writing the code) by making the log message easily parseable.</p>
             <p class="fragment">Write your log messages in JSON!</p>
             <p class="fragment">(or xml if you hate yourself)</p>
+            <p class="fragment"><a href="https://docs.python.org/2/howto/logging-cookbook.html#implementing-structured-logging">python docs</a></p>
         </section>
 
         <section>
             <h2>Structured Log</h2>
+
+            <p class="fragment">currently</p>
             <pre class="fragment"><code data-trim class="language-python">
-            logger.info( "%s: rendering web page took %d ms", self, render_time() )
+logger.info( "%s: rendering web page took %d ms", self, render_time() )
 INFO 10:10:10.10 cheetah: rendering web page took 34 ms
             </code></pre>
             <p class="fragment">is now</p>
             <pre class="fragment"><code data-trim class="language-python">
-            logger.info( "render_time", what=self, took=render_time() )
+logger.info( "render_time", what=self, took=render_time() )
 INFO, 10:10:10.10, "render_time", { what="cheetah", took=34 }
             </code></pre>
             <p class="fragment">which is easy to parse for both a computer and not too bad for a person</p>
@@ -499,11 +503,14 @@ time: 0m37.931s # piped to /dev/null
           <h2>3rd Party Software</h2>
 
             <h3 class="fragment">sentry</h3>
+
             <ul class="fragment">
-            <li>https://getsentry.com/for/python/</li>
-            <li>written in python</li>
-            <li>dozens of language bindings</li>
-            <li>self hosted or paid service</li>
+              <li>https://getsentry.com</li>
+              <li>written in python</li>
+              <li>dozens of language bindings</li>
+              <li>self hosted or paid service</li>
+              <li><tt>pip install sentry</tt></li>
+              <li>use a virtenv, lots of deps</li>
             </ul>
 
         </section>
@@ -578,6 +585,7 @@ progress: true,
 history: true,
 center: false,
 mouseWheel: false,
+fragments: false,
 
 /*
 width: 1024,
