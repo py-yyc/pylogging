@@ -35,7 +35,7 @@ class ColoredStream( logging.StreamHandler ):
 
     __init_called = False
 
-    def __init__(self, stream=None):
+    def __init__(self, stream=None, **kw):
 
         # make sure colorama.init() is called at least once (and once only)
         if not ColoredStream.__init_called:
@@ -43,23 +43,25 @@ class ColoredStream( logging.StreamHandler ):
             colorama.init() # autoreset = True, doesn't appear to work for some reason
 
         # don't output color to pipes or files
-        self._enabled = sys.stdout.isatty() and sys.stderr.isatty()
+        self._enabled = stream.isatty()
 
-        return super(ColoredStream,self).__init__(stream)
+        return super(ColoredStream,self).__init__(stream, **kw)
 
     def emit(self, record):
-
-        try:
-            color = ColoredStream.colors[record.levelname]
-        except KeyError:
-            color = ''
 
         msg = self.format(record)
 
         if self._enabled:
-            print( color + msg + colorama.Style.RESET_ALL, file=self.stream )
+            try:
+                color = ColoredStream.colors[record.levelname]
+            except KeyError:
+                color = ''
+
+            #print( color + msg + colorama.Style.RESET_ALL, file=self.stream )
+            self.stream.write( color + msg + colorama.Style.RESET_ALL + '\n' )
+            self.flush()
         else:
-            self.stream.write( "%s\n" % (msg) )
+            self.stream.write( msg + '\n' )
             self.flush()
 
 

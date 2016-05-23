@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from logger import logger
+from mylogging import logger
 
 def enable_debug():
     import logging
