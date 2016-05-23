@@ -38,6 +38,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 dt { text-align: left; }
 .reveal li small { vertical-align: middle; }
 .reveal img { vertical-align: middle; }
+.reveal a { color: #5689d0; }
 
 .reveal pre {
   box-shadow: none;
@@ -70,6 +71,11 @@ pre > code {
   opacity: 0.5;
 }
 
+.slides {
+  position: absolute !important;
+  top: 500px !important;
+}
+
 </style>
 
 </head>
@@ -84,7 +90,9 @@ pre > code {
     <section>
         <h1>Logging</h1>
         <h3>A journey through time</h3>
-        <small>by <a href="http://www.burgundywall.com">Kurt Neufeld</a></a></small>
+        <small>by <a href="mailto:kneufeld@burgundywall.com">Kurt Neufeld</a></small><br/>
+        <small><a href="http://www.burgundywall.com">www.burgundywall.com</a></small><br/>
+        <small><a href="https://twitter.com/kneufeld">@kneufeld</a></small>
     </section>
 
     <section>
@@ -209,6 +217,7 @@ AssertionError
             <li class="fragment">can rotate the log files</li>
             <li class="fragment">can log to a file, stdout, stderr, database</li>
             <li class="fragment">all at the same time!</li>
+            <li class="fragment">custom formatters, handlers, etc</li>
             <li class="fragment">colors!</li>
           </ul>
         </section>
@@ -319,95 +328,119 @@ except Exception as e:
 import logging.config
 from logconf import logconf
 logging.config.dictConfig( logconf() )
-
-def logconf():
-    return {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'thread_verbose': {
-            'format': '%(levelname)-5s %(asctime)s %(name)s:%(lineno)d %(process)d %(thread)d: %(message)s'
-        },
-        'verbose': {
-            'format': '%(levelname)-5s %(name)s:%(lineno)d: %(message)s'
-        },
-        'simple': {
-            'format': '%(levelname)-5s %(name)s:%(lineno)d: %(message)s',
-            'datefmt': '%H:%M:%S',
-        },
-    },
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'handlers': {
-        'null': {
-            'class':'logging.NullHandler',
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        },
-        'console':{
-            'level': 'DEBUG',
-            'class':'logging.StreamHandler',
-            'formatter': 'simple'
-        },
-        'logfile': {
-            'level': 'DEBUG',
-            'class':'logging.handlers.GroupWriteRotatingFileHandler',
-            'filename': '%s.log' % PROJECT_NAME,
-            'maxBytes': 500000,
-            'backupCount': 2,
-            'formatter': 'verbose',
-        },
-    },
-    'loggers': {
-        '': { # default/root catch all
-            'handlers': ['logfile'],
-            'propagate': False,
-            'level': 'WARNING',
-        },
-        'requests': { # requests library
-            'handlers':['null'],
-            'propagate': False,
-            'level':'WARN',
-        },
-        'django': {
-            'propagate': True,
-            'level':'INFO',
-        },
-        MY_PROJECT: {
-            'handlers': ['console'],
-            'propagate': True,
-            'level': 'DEBUG',
-        },
-    },
-    }
           </code></pre>
         </section>
 
         <section>
           <h2>Log configuration</h2>
 
-          <pre class="fragment"><code data-trim class="language-python">
-            <h1>CODE EXAMPLES</h1>
-            colors
-            rotation
-            dict
+          <pre><code data-trim class="language-python">
+def logconf():
 
-
+    return {
+      'version': 1,
+      'disable_existing_loggers': False,
+      'formatters': {
+          'thread_verbose': {
+              'format': '%(levelname)-5s %(asctime)s %(name)s:%(lineno)d %(process)d %(thread)d: %(message)s'
+          },
+          'verbose': {
+              'format': '%(levelname)-5s %(name)s:%(lineno)d: %(message)s'
+          },
+          'simple': {
+              'format': '%(levelname)-5s %(name)s:%(lineno)d: %(message)s',
+              'datefmt': '%H:%M:%S',
+          },
+      },
+      ...
+          </code></pre>
+        </section>
 
         <section>
-          <h2 class="fragment">libraries should <em>never</em> format loggers</h2>
-          <h2 class="fragment">just get a logger and then log</h2>
+          <h2>Log configuration</h2>
+
+          <pre><code data-trim class="language-python">
+...
+  'filters': {
+      'require_debug_false': {
+          '()': 'django.utils.log.RequireDebugFalse'
+      }
+  },
+...
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Log configuration</h2>
+
+          <pre><code data-trim class="language-python">
+  ...
+  'handlers': {
+      'null': {
+          'class':'logging.NullHandler',
+      },
+      'mail_admins': {
+          'level': 'ERROR',
+          'filters': ['require_debug_false'],
+          'class': 'django.utils.log.AdminEmailHandler'
+      },
+      'console':{
+          'level': 'DEBUG',
+          'class':'logging.StreamHandler',
+          'formatter': 'simple'
+      },
+      'logfile': {
+          'level': 'DEBUG',
+          'class':'logging.handlers.GroupWriteRotatingFileHandler',
+          'filename': '%s.log' % PROJECT_NAME,
+          'maxBytes': 500000,
+          'backupCount': 2,
+          'formatter': 'verbose',
+      },
+  },
+...
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Log configuration</h2>
+
+          <pre><code data-trim class="language-python">
+...
+  'loggers': {
+      '': { # default/root catch all
+          'handlers': ['logfile'],
+          'propagate': False,
+          'level': 'WARNING',
+      },
+      'requests': { # requests library
+          'handlers':['null'],
+          'propagate': False,
+          'level':'WARN',
+      },
+      'django': {
+          'propagate': True,
+          'level':'INFO',
+      },
+      MY_PROJECT: {
+          'handlers': ['console'],
+          'propagate': True,
+          'level': 'DEBUG',
+      },
+  },
+} # end of dictionary
+
+          </code></pre>
+        </section>
+
+        <section>
+          <h2 style="margin-top: 3em">libraries should <em>never</em><br/> format loggers</h2>
+          <h2 class="fragment">just get a logger<br/> and then log</h2>
         </section>
 
         <section>
             <h2>Structured Logging</h2>
-            <p class="fragment">Which brings us to a growing <em>movement</em>
+            <p class="fragment">There is a growing <em>movement</em>
             called structured logging</p>
             <p class="fragment">If you know your log messages are going to be consumed
             by a computer (vs a human) then why not make it easier on the computer (and
@@ -546,6 +579,7 @@ history: true,
 center: false,
 mouseWheel: false,
 
+/*
 width: 1024,
 height: 768,
 
@@ -553,6 +587,7 @@ margin: 0.1,
 
 minScale: 0.2,
 maxScale: 10.0,
+*/
 
 transition: 'none', // none/fade/slide/convex/concave/zoom
 
