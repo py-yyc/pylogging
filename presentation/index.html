@@ -72,10 +72,6 @@ pre > code {
   opacity: 0.5;
 }
 
-.slides {
-  position: absolute !important;
-  top: 500px !important;
-}
 
 </style>
 
@@ -154,6 +150,7 @@ AssertionError
 
         <p>There are several reasons why you want to enable logging.</p>
         <ol>
+            <li class="fragment">aid in development</li>
             <li class="fragment">have a record of errors</li>
             <li class="fragment">application monitoring</li>
             <ol>
@@ -166,7 +163,7 @@ AssertionError
             <li class="fragment">have a history of low level information for future aid in debugging
             <ul>
               <li class="fragment">this is the <em>through time</em> part</li>
-                <li class="fragment">this is a gift to your future self</li>
+              <li class="fragment">this is a gift to your future self</li>
             </ul>
             </li>
         </ol>
@@ -201,6 +198,7 @@ AssertionError
             Logs are for computers. Humans don't run analytics and create graphs by hand,
             computers do that.
             </p>
+            <p class="fragment">More on this later</p>
         </section>
 
         <section>
@@ -216,7 +214,7 @@ AssertionError
             <li class="fragment">can be configured from code</li>
             <li class="fragment">can be configured from a file</li>
             <li class="fragment">can rotate the log files</li>
-            <li class="fragment">can log to a file, stdout, stderr, database</li>
+            <li class="fragment">can log to a file, stdout, socket, database</li>
             <li class="fragment">all at the same time!</li>
             <li class="fragment">custom formatters, handlers, etc</li>
             <li class="fragment">colors!</li>
@@ -257,7 +255,7 @@ AssertionError
         </section>
 
         <section>
-          <h2>how to setup</h2>
+          <h2>How to setup</h2>
 
           <p class="fragment">https://docs.python.org/2/library/logging.html</p>
 
@@ -265,7 +263,7 @@ AssertionError
         </section>
 
         <section>
-          <h2>simplest case</h2>
+          <h2>Simplest case</h2>
           <p class="fragment">don't do this</p>
           <pre class="fragment"><code data-trim class="language-python">
 import logging
@@ -277,7 +275,7 @@ logging.warn("warning message")
         </section>
 
         <section>
-          <h2>next simplest case</h2>
+          <h2>Next simplest case</h2>
 
           <p class="fragment"><em>maybe</em> do this</p>
 
@@ -287,14 +285,14 @@ FORMAT = '%(levelname)-5s %(filename)s:%(lineno)d: %(message)s'
 logging.basicConfig( level=logging.DEBUG, format=FORMAT )
 
 logging.debug("debug message")
-# DEBUG main.py:1: debug message
+# DEBUG main.py:5: debug message
           </code></pre>
 
           <p class="fragment">but don't do that</p>
         </section>
 
         <section>
-          <h2>more better (high level)</h2>
+          <h2>More better (high level)</h2>
 
           <pre class="fragment"><code data-trim class="language-python">
 # main.py
@@ -325,10 +323,27 @@ except Exception as e:
         <section>
           <h2>Log configuration</h2>
 
-          <pre><code data-trim class="language-python">
+          <pre class="fragment"><code data-trim class="language-python">
+# via dictionary
 import logging.config
 from logconf import logconf
 logging.config.dictConfig( logconf() )
+          </code></pre>
+
+          <pre class="fragment"><code data-trim class="language-python">
+# via file
+import logging.config
+from logconf import logconf
+logging.config.fileConfig( "logging.conf" )
+          </code></pre>
+
+          <pre class="fragment"><code data-trim class="language-python">
+# via code
+import logging.config
+
+logger = logging.getLogger()
+logger.setLevel( logging.NOTSET )
+...
           </code></pre>
         </section>
 
@@ -487,13 +502,15 @@ time: 0m0.019s # baseline for loop
             <pre class="fragment"><code data-trim class="language-python">
 # set log level to info
 for i in xrange(1000000): logger.debug("%d",i) # log level too low
-time: 0m0.061s # 0.04 slower
+time: 0m0.061s # 0.042 seconds slower
             </code></pre>
             <pre class="fragment"><code data-trim class="language-python">
 # set log level to debug
 for i in xrange(1000000): logger.debug("%d",i) # no longer too low
 time: 0m37.931s # piped to /dev/null
             </code></pre>
+            <p class="fragment">if you need one million log messages 38 seconds
+            is probably a small price to pay to get them</p>
             <p class="fragment">so I don't want to <strong>EVER</strong> hear that you don't log
             because it's <em>too slow</em></p>
             <p class="fragment"><strong>EVER<span class="fragment">!!1!</span></strong></p>
@@ -540,37 +557,12 @@ time: 0m37.931s # piped to /dev/null
         <section style="text-align: left;">
             <h1>THE END</h1>
             <h3 class="fragment">questions?</h3>
+            <h3 class="fragment">before code examples.</h3>
         </section>
-
-        <!--
-    <section>
-        <section id="fragmentsx">
-            <h2>Fragments</h2>
-            <p>Hit the next arrow...</p>
-            <p class="fragment">... to step through ...</p>
-            <p><span class="fragment">... a</span> <span class="fragment">fragmented</span> <span class="fragment">slide.</span></p>
-
-            <aside class="notes">
-                This slide has fragments which are also stepped through in the notes window.
-            </aside>
-        </section>
-        <section>
-            <h2>Fragment Styles</h2>
-            <p>There's different types of fragments, like:</p>
-            <p class="fragment grow">grow</p>
-            <p class="fragment shrink">shrink</p>
-            <p class="fragment roll-in">roll-in</p>
-            <p class="fragment fade-out">fade-out</p>
-            <p class="fragment current-visible">current-visible</p>
-            <p class="fragment highlight-red">highlight-red</p>
-            <p class="fragment highlight-blue">highlight-blue</p>
-        </section>
-    </section>
-    -->
 
     </div><!-- slides -->
 
-</div!-- reveal -->
+</div>!-- reveal -->
 
 <script src="lib/js/head.min.js"></script>
 <script src="js/reveal.js"></script>
@@ -585,7 +577,7 @@ progress: true,
 history: true,
 center: false,
 mouseWheel: false,
-fragments: false,
+fragments: true,
 
 /*
 width: 1024,
